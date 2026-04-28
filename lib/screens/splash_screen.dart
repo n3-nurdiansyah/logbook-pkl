@@ -82,7 +82,8 @@ class _SplashScreenState extends State<SplashScreen>
     // Navigasi berdasarkan status login
     if (mounted) {
       if (auth.isLoggedIn) {
-        context.go('/dashboard');
+        final role = auth.userRole;
+        context.go(role == 'teacher' ? '/teacher' : '/dashboard');
       } else {
         context.go('/login');
       }

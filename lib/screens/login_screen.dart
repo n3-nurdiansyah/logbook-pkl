@@ -238,7 +238,14 @@ class _LoginScreenState extends State<LoginScreen>
                                   emailController.text,
                                   passwordController.text,
                                 );
-                                context.go('/dashboard');
+                                if (mounted) {
+                                  final role = auth.userRole;
+                                  context.go(
+                                    role == 'teacher'
+                                        ? '/teacher'
+                                        : '/dashboard',
+                                  );
+                                }
                               } catch (e) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(content: Text(e.toString())),
@@ -360,8 +367,14 @@ class _LoginScreenState extends State<LoginScreen>
                               setState(() => isLoading = true);
                               try {
                                 await auth.signInWithGoogle();
+                                // Cek apakah user belum menutup halaman login
                                 if (mounted) {
-                                  context.go('/dashboard');
+                                  final role = auth.userRole;
+                                  context.go(
+                                    role == 'teacher'
+                                        ? '/teacher'
+                                        : '/dashboard',
+                                  );
                                 }
                               } catch (e) {
                                 ScaffoldMessenger.of(context).showSnackBar(

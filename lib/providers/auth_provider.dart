@@ -14,6 +14,9 @@ class AuthProvider extends ChangeNotifier {
   AuthProvider() {
     _auth.authStateChanges().listen((User? currentUser) {
       _user = currentUser;
+      if (currentUser != null) {
+        _syncUserToFirestore(currentUser);
+      }
       notifyListeners();
     });
   }
@@ -26,6 +29,7 @@ class AuthProvider extends ChangeNotifier {
     if (docSnap.exists) {
       _userRole = docSnap.data()?['role'] ?? 'student';
       notifyListeners();
+      print('User sudah ada di Firestore dengan role: $_userRole');
       return;
     }
 
@@ -46,7 +50,10 @@ class AuthProvider extends ChangeNotifier {
 
   Future<void> login(String email, String password) async {
     try {
-      final credential = await _auth.signInWithEmailAndPassword(email: email, password: password);
+      final credential = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
       isLoggedIn ? notifyListeners() : null;
       if (credential.user == null) return;
       await _syncUserToFirestore(credential.user!);
@@ -66,7 +73,10 @@ class AuthProvider extends ChangeNotifier {
       googleProvider.setCustomParameters({'login_hint': 'user@example.com'});
 
       // Once signed in, return the UserCredential
-      await _auth.signInWithPopup(googleProvider);
+      final credential = await _auth.signInWithPopup(googleProvider);
+      if (credential.user != null) {
+        await _syncUserToFirestore(credential.user!);
+      }
     } catch (e) {
       throw Exception('Gagal Login ${e.toString()}');
     }
@@ -74,5 +84,8 @@ class AuthProvider extends ChangeNotifier {
 
   Future<void> logout() async {
     await _auth.signOut();
+    _user = null;
+    _userRole = null;
+    notifyListeners();
   }
 }
