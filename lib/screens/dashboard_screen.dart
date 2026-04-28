@@ -148,6 +148,8 @@ class _DashboardScreenState extends State<DashboardScreen>
   }
 
   Widget _buildHeader() {
+    final auth = context.read<AuthProvider>();
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -163,8 +165,8 @@ class _DashboardScreenState extends State<DashboardScreen>
               ),
             ),
             const SizedBox(height: 4),
-            const Text(
-              "Dafizh",
+            Text(
+              auth.user?.displayName ?? "User",
               style: TextStyle(
                 color: AppColors.textPrimary,
                 fontSize: 32,
@@ -176,10 +178,12 @@ class _DashboardScreenState extends State<DashboardScreen>
         ),
         // Tombol Logout dengan icon logout
         GestureDetector(
-          onTap: () {
+          onTap: () async {
             // Logout logic
-            context.read<AuthProvider>().logout();
-            context.go('/login');
+            await context.read<AuthProvider>().logout();
+            if (mounted) {
+              context.go('/login');
+            }
           },
           child: Container(
             decoration: BoxDecoration(

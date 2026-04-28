@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use, use_super_parameters
+// ignore_for_file: deprecated_member_use, use_super_parameters, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -238,7 +238,11 @@ class _LoginScreenState extends State<LoginScreen>
                                   emailController.text,
                                   passwordController.text,
                                 );
-                                if (context.mounted) context.go('/dashboard');
+                                context.go('/dashboard');
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(e.toString())),
+                                );
                               } finally {
                                 if (mounted) setState(() => isLoading = false);
                               }
@@ -355,18 +359,13 @@ class _LoginScreenState extends State<LoginScreen>
                           : () async {
                               setState(() => isLoading = true);
                               try {
-                                // Implementasi Google Sign-in
-                                // await auth.loginWithGoogle();
-                                // if (context.mounted) context.go('/dashboard');
-
-                                // Placeholder untuk testing
+                                await auth.signInWithGoogle();
+                                if (mounted) {
+                                  context.go('/dashboard');
+                                }
+                              } catch (e) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'Google Sign-in belum dikonfigurasi',
-                                    ),
-                                    duration: Duration(seconds: 2),
-                                  ),
+                                  SnackBar(content: Text(e.toString())),
                                 );
                               } finally {
                                 if (mounted) setState(() => isLoading = false);
