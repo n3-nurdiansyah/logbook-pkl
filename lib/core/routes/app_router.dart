@@ -1,4 +1,7 @@
 import 'package:go_router/go_router.dart';
+import 'package:logbook/screens/add_student_screen.dart';
+import 'package:logbook/screens/report_screen.dart';
+import 'package:logbook/screens/teacher_dashboard_screen.dart';
 import '../../screens/login_screen.dart';
 import '../../screens/dashboard_screen.dart';
 import '../../screens/attendance_form_screen.dart';
@@ -21,6 +24,20 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/riwayat',
       builder: (context, state) => const HistoryScreen(),
+    ),
+    GoRoute(
+      path: '/teacher',
+      builder: (context, state) => const TeacherDashboardScreen(),
+      routes: [
+        GoRoute(
+          path: 'add-student',
+          builder: (context, state) => const AddStudentScreen(),
+        ),
+        GoRoute(
+          path: 'reports',
+          builder: (context, state) => const ReportScreen(),
+        ),
+      ],
     ),
   ],
 );
